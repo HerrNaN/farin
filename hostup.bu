@@ -1,0 +1,7 @@
+variant: fcos
+version: 1.5.0
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAFZNWq222oGEx2Ce5ZOTSeDa2qEXvZU2t/j+hip5k+sYBJ1zctX1SFL9GuxWCtlw/3BhMa7VCt67qQk0gFwvO9hiwCVHIDom6KAT03agNDRphUo0QsKwEdcjPrhr2h+q2lVoStVfYFKIMO7d7NpmuRFO3J8nVrWLqDVheCgVbGGBPjxMg== karl@nembus
