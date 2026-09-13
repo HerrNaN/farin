@@ -23,12 +23,12 @@ fi
 cd "$SERVER_DIR"
 umask 077
 
-GEN_DIR=gen
-SECRETS_FILE="$GEN_DIR/secrets.yaml"
-TALOSCONFIG_FILE="$GEN_DIR/talosconfig"
+TALOS_DIR=.talos
+SECRETS_FILE="$TALOS_DIR/secrets.yaml"
+TALOSCONFIG_FILE="$TALOS_DIR/talosconfig"
 
 if [ ! -f "$SECRETS_FILE" ] || [ ! -f "$TALOSCONFIG_FILE" ]; then
-    echo "Talos credentials are missing; run 'mise run setup-talos $SERVER_NAME <server-ip>' first" >&2
+    echo "Talos credentials are missing; run 'mise run setup-server $SERVER_NAME <server-ip>' first" >&2
     exit 1
 fi
 
@@ -43,15 +43,15 @@ talosctl gen config "$SERVER_NAME" "https://$SERVER_HOST:6443" \
     --with-secrets "$SECRETS_FILE" \
     --config-patch "@config.yaml" \
     --output-types controlplane \
-    --output "$GEN_DIR/controlplane.yaml" \
+    --output "$TALOS_DIR/controlplane.yaml" \
     --force
 
-chmod 600 "$SECRETS_FILE" "$GEN_DIR/controlplane.yaml" "$TALOSCONFIG_FILE"
+chmod 600 "$SECRETS_FILE" "$TALOS_DIR/controlplane.yaml" "$TALOSCONFIG_FILE"
 
 echo "> applying machine config"
 talosctl apply-config \
     --nodes "$SERVER_NODE" \
-    --file "$GEN_DIR/controlplane.yaml"
+    --file "$TALOS_DIR/controlplane.yaml"
 
 echo "> talosctl health"
 talosctl health --nodes "$SERVER_NODE" --wait-timeout 20m

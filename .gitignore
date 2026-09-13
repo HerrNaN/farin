@@ -1,3 +1,4 @@
+.talos/
 talosconfig
 secrets.yaml
 controlplane.yaml
