@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siderolabs/talos/refs/tags/v1.13.9/website/content/v1.13/schemas/config.schema.json
+version: v1alpha1
+machine:
+  install:
+    disk: /dev/sda
+cluster:
+  allowSchedulingOnControlPlanes: true

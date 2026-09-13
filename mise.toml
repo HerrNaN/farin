@@ -1,0 +1,18 @@
+[tools]
+jq = "latest"
+talosctl = "latest"
+
+[tasks.setup-server]
+description = "Perform the initial server setup"
+usage = '''
+arg "<server-name>" help="The name of the server"
+arg "<server-ip>" help="The IP of the server to set up"
+'''
+run = './scripts/setup-server.sh "$usage_server_name" "$usage_server_ip"'
+
+[tasks.conf-server]
+description = "Apply server configuration updates"
+usage = '''
+arg "<server-name>" help="The name of the server"
+'''
+run = './scripts/conf-server.sh "$usage_server_name"'
