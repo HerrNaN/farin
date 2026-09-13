@@ -1,5 +1,6 @@
 [tools]
 jq = "latest"
+kubectl = "latest"
 talosctl = "latest"
 
 [tasks.setup-server]
@@ -7,12 +8,14 @@ description = "Perform the initial server setup"
 usage = '''
 arg "<server-name>" help="The name of the server"
 arg "<server-ip>" help="The IP of the server to set up"
+arg "<cluster-name>" help="The logical cluster to configure"
 '''
-run = './scripts/setup-server.sh "$usage_server_name" "$usage_server_ip"'
+run = './scripts/setup-server.sh "$usage_server_name" "$usage_server_ip" "$usage_cluster_name"'
 
 [tasks.conf-server]
 description = "Apply server configuration updates"
 usage = '''
 arg "<server-name>" help="The name of the server"
+arg "<cluster-name>" help="The logical cluster to configure"
 '''
-run = './scripts/conf-server.sh "$usage_server_name"'
+run = './scripts/conf-server.sh "$usage_server_name" "$usage_cluster_name"'
