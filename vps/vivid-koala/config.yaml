@@ -5,3 +5,8 @@ machine:
     disk: /dev/sda
 cluster:
   allowSchedulingOnControlPlanes: true
+  network:
+    cni:
+      name: none
+  proxy:
+    disabled: true

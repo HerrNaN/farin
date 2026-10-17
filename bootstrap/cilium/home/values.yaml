@@ -1,0 +1,38 @@
+ipam:
+  mode: kubernetes
+kubeProxyReplacement: true
+
+# Use Talos KubePrism without depending on cluster networking.
+k8sServiceHost: localhost
+k8sServicePort: 7445
+
+operator:
+  replicas: 1
+
+# Keep Talos host DNS forwarding working.
+bpf:
+  hostLegacyRouting: true
+
+# Talos already mounts cgroupv2 and does not allow SYS_MODULE.
+cgroup:
+  autoMount:
+    enabled: false
+  hostRoot: /sys/fs/cgroup
+securityContext:
+  capabilities:
+    ciliumAgent:
+      - CHOWN
+      - KILL
+      - NET_ADMIN
+      - NET_RAW
+      - IPC_LOCK
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    cleanCiliumState:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE

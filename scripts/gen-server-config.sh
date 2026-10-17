@@ -16,6 +16,9 @@ TALOS_DIR="$CLUSTER_DIR/.talos"
 SECRETS_FILE="$TALOS_DIR/secrets.yaml"
 TALOSCONFIG_FILE="$TALOS_DIR/talosconfig"
 CONTROLPLANE_FILE="$TALOS_DIR/controlplane.yaml"
+CILIUM_DIR="$ROOT_DIR/bootstrap/cilium/$CLUSTER_NAME"
+CILIUM_MANIFEST_FILE="$TALOS_DIR/cilium.yaml"
+CILIUM_VERSION="1.20.3"
 ARGOCD_DIR="$ROOT_DIR/bootstrap/argocd/$CLUSTER_NAME"
 ARGOCD_MANIFEST_FILE="$TALOS_DIR/argocd.yaml"
 CLUSTER_PATCH_FILE="$TALOS_DIR/cluster-patch.json"
@@ -35,6 +38,11 @@ if [ ! -f "$ARGOCD_DIR/kustomization.yaml" ]; then
     exit 1
 fi
 
+if [ ! -f "$CILIUM_DIR/values.yaml" ]; then
+    echo "Cilium bootstrap configuration not found: $CILIUM_DIR/values.yaml" >&2
+    exit 1
+fi
+
 if [ ! -f "$SECRETS_FILE" ]; then
     echo "Talos secrets not found: $SECRETS_FILE" >&2
     exit 1
@@ -42,11 +50,23 @@ fi
 
 umask 077
 
+echo "> rendering Cilium bootstrap manifests"
+helm template cilium oci://quay.io/cilium/charts/cilium \
+    --version "$CILIUM_VERSION" \
+    --namespace kube-system \
+    --values "$CILIUM_DIR/values.yaml" \
+    --include-crds \
+    > "$CILIUM_MANIFEST_FILE"
+
 echo "> rendering Argo CD bootstrap manifests"
 kubectl kustomize "$ARGOCD_DIR" > "$ARGOCD_MANIFEST_FILE"
 jq --null-input \
+    --rawfile cilium "$CILIUM_MANIFEST_FILE" \
     --rawfile manifest "$ARGOCD_MANIFEST_FILE" \
-    '{cluster: {inlineManifests: [{name: "argocd", contents: $manifest}]}}' \
+    '{cluster: {inlineManifests: [
+        {name: "cilium", contents: $cilium},
+        {name: "argocd", contents: $manifest}
+    ]}}' \
     > "$CLUSTER_PATCH_FILE"
 
 echo "> talosctl gen config"
@@ -62,6 +82,7 @@ chmod 600 \
     "$SECRETS_FILE" \
     "$TALOSCONFIG_FILE" \
     "$CONTROLPLANE_FILE" \
+    "$CILIUM_MANIFEST_FILE" \
     "$ARGOCD_MANIFEST_FILE" \
     "$CLUSTER_PATCH_FILE"
 

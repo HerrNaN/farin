@@ -65,6 +65,10 @@ talosctl kubeconfig "$KUBECONFIG_FILE" \
 chmod 600 "$KUBECONFIG_FILE"
 export KUBECONFIG="$KUBECONFIG_FILE"
 
+echo "> waiting for Cilium"
+kubectl rollout status daemonset/cilium --namespace kube-system --timeout=10m
+kubectl rollout status deployment/cilium-operator --namespace kube-system --timeout=10m
+
 echo "> waiting for Argo CD"
 kubectl wait --for=create deployment/argocd-server --namespace argocd --timeout=10m
 kubectl rollout status deployment --all --namespace argocd --timeout=10m

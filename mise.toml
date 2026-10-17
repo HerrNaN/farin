@@ -1,4 +1,5 @@
 [tools]
+helm = "latest"
 jq = "latest"
 kubectl = "latest"
 talosctl = "latest"
