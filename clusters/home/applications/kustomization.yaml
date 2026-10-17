@@ -3,5 +3,5 @@ kind: Kustomization
 resources:
   - traefik.yaml
   - cert-manager.yaml
-  - letsencrypt-staging.yaml
+  - letsencrypt-production.yaml
   - hello-world.yaml
