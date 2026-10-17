@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: traefik
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/enforce: privileged
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+  source:
+    chart: traefik
+    repoURL: https://traefik.github.io/charts
+    targetRevision: 41.0.2
+    helm:
+      releaseName: traefik
+      valuesObject:
+        deployment:
+          replicas: 1
+
+        service:
+          enabled: false
+
+        ingressClass:
+          enabled: true
+          isDefaultClass: true
+
+        providers:
+          kubernetesIngress:
+            publishedService:
+              enabled: false
+
+        ports:
+          web:
+            hostPort: 80
+          websecure:
+            hostPort: 443
