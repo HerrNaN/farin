@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: laga-labs
+  namespace: argocd
+spec:
+  project: laga-labs
+  source:
+    repoURL: ghcr.io/herrnan/charts/devel
+    chart: laga
+    # Include timestamped prereleases, not just stable chart versions.
+    targetRevision: "*-0"
+    helm:
+      releaseName: laga-labs
+      valuesObject:
+        webAuthn:
+          rpID: labs.laga.emycia.com
+          origin: https://labs.laga.emycia.com
+        persistence:
+          storageClass: laga-labs-local
+          size: 1Gi
+        ingress:
+          enabled: true
+          className: traefik
+          host: labs.laga.emycia.com
+          tlsSecretName: laga-labs-tls
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-production
+            traefik.ingress.kubernetes.io/router.entrypoints: websecure
+            traefik.ingress.kubernetes.io/router.tls: "true"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: laga-labs
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
