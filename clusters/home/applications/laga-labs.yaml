@@ -14,15 +14,15 @@ spec:
       releaseName: laga-labs
       valuesObject:
         webAuthn:
-          rpID: labs.laga.emycia.com
-          origin: https://labs.laga.emycia.com
+          rpID: labs.handlat.app
+          origin: https://labs.handlat.app
         persistence:
           storageClass: laga-labs-local
           size: 1Gi
         ingress:
           enabled: true
           className: traefik
-          host: labs.laga.emycia.com
+          host: labs.handlat.app
           tlsSecretName: laga-labs-tls
           annotations:
             cert-manager.io/cluster-issuer: letsencrypt-production
