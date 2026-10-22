@@ -6,5 +6,5 @@ resources:
   - letsencrypt-production.yaml
   - hello-world.yaml
   - local-path-provisioner.yaml
-  - laga-labs-project.yaml
-  - laga-labs.yaml
+  - handlat-labs-project.yaml
+  - handlat-labs.yaml

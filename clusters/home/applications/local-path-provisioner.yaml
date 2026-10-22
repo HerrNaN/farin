@@ -15,9 +15,9 @@ spec:
         helperImage:
           tag: "1.37.0"
         storageClass:
-          name: laga-labs-local
+          name: handlat-labs-local
           defaultClass: false
-          # Local volumes support fsGroup for Laga's non-root SQLite writer.
+          # Local volumes support fsGroup for Handlat's non-root SQLite writer.
           defaultVolumeType: local
           reclaimPolicy: Retain
           volumeBindingMode: WaitForFirstConsumer

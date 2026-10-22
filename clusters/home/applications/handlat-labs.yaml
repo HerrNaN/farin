@@ -1,36 +1,36 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: laga-labs
+  name: handlat-labs
   namespace: argocd
 spec:
-  project: laga-labs
+  project: handlat-labs
   source:
     repoURL: ghcr.io/herrnan/charts/devel
-    chart: laga
+    chart: handlat
     # Include timestamped prereleases, not just stable chart versions.
     targetRevision: "*-0"
     helm:
-      releaseName: laga-labs
+      releaseName: handlat-labs
       valuesObject:
         webAuthn:
           rpID: labs.handlat.app
           origin: https://labs.handlat.app
         persistence:
-          storageClass: laga-labs-local
+          storageClass: handlat-labs-local
           size: 1Gi
         ingress:
           enabled: true
           className: traefik
           host: labs.handlat.app
-          tlsSecretName: laga-labs-tls
+          tlsSecretName: handlat-labs-tls
           annotations:
             cert-manager.io/cluster-issuer: letsencrypt-production
             traefik.ingress.kubernetes.io/router.entrypoints: websecure
             traefik.ingress.kubernetes.io/router.tls: "true"
   destination:
     server: https://kubernetes.default.svc
-    namespace: laga-labs
+    namespace: handlat-labs
   syncPolicy:
     syncOptions:
       - CreateNamespace=true

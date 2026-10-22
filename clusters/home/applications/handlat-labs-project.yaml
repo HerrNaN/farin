@@ -1,19 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: laga-labs
+  name: handlat-labs
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  description: Laga labs development deployment
+  description: Handlat labs development deployment
   sourceRepos:
     - ghcr.io/herrnan/charts/devel
   destinations:
     - server: https://kubernetes.default.svc
-      namespace: laga-labs
+      namespace: handlat-labs
   # Allow namespace creation, but not cluster infrastructure such as PVs or RBAC.
   clusterResourceWhitelist:
     - group: ""
