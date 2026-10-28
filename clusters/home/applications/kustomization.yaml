@@ -8,3 +8,6 @@ resources:
   - local-path-provisioner.yaml
   - handlat-labs-project.yaml
   - handlat-labs.yaml
+  - handlat-labs-backup-daily.yaml
+  - handlat-labs-backup-weekly.yaml
+  - handlat-labs-backup-monthly.yaml
