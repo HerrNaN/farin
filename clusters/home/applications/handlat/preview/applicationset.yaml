@@ -1,0 +1,69 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: handlat-previews
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - pullRequest:
+        github:
+          owner: HerrNaN
+          repo: handlat
+        requeueAfterSeconds: 300
+        values:
+          # Update when Handlat bumps its source chart's base version.
+          chartBase: 0.1.0
+  syncPolicy:
+    preserveResourcesOnDeletion: false
+  template:
+    metadata:
+      name: 'handlat-pr-{{ .number }}'
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: handlat-previews
+      sources:
+        - repoURL: ghcr.io/herrnan/charts/preview
+          chart: handlat
+          targetRevision: >-
+            >={{ .values.chartBase }}-pr.{{ .number }}.0
+            <{{ .values.chartBase }}-pr.{{ add .number 1 }}.0
+          helm:
+            releaseName: 'handlat-pr-{{ .number }}'
+            valuesObject:
+              persistence:
+                retain: false
+                storageClass: handlat-preview-local
+                size: 10Mi
+              webAuthn:
+                rpID: 'pr-{{ .number }}.preview.handlat.app'
+                origin: 'https://pr-{{ .number }}.preview.handlat.app'
+              ingress:
+                enabled: true
+                className: traefik
+                host: 'pr-{{ .number }}.preview.handlat.app'
+                tlsSecretName: 'handlat-pr-{{ .number }}-tls'
+                annotations:
+                  cert-manager.io/cluster-issuer: letsencrypt-production
+                  traefik.ingress.kubernetes.io/router.entrypoints: websecure
+                  traefik.ingress.kubernetes.io/router.tls: "true"
+        # Track the Namespace for cascading cleanup; CreateNamespace alone does not own it.
+        - repoURL: https://github.com/HerrNaN/farin.git
+          targetRevision: main
+          path: apps/namespace
+          helm:
+            releaseName: 'handlat-pr-{{ .number }}'
+            valuesObject:
+              labels:
+                app.kubernetes.io/part-of: handlat-previews
+              annotations:
+                argocd.argoproj.io/sync-wave: "-1"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'handlat-pr-{{ .number }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

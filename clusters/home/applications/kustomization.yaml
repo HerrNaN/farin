@@ -6,6 +6,7 @@ resources:
   - letsencrypt-production.yaml
   - hello-world.yaml
   - local-path-provisioner.yaml
+  - handlat/preview
   - handlat-labs-project.yaml
   - handlat-labs.yaml
   - handlat-labs-backup-daily.yaml

@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: handlat-previews
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Disposable Handlat pull request environments
+  sourceRepos:
+    - ghcr.io/herrnan/charts/preview
+    - https://github.com/HerrNaN/farin.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: handlat-pr-*
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: apps
+      kind: Deployment
+    - group: ""
+      kind: Service
+    - group: ""
+      kind: PersistentVolumeClaim
+    - group: networking.k8s.io
+      kind: Ingress
