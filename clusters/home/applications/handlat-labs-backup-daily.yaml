@@ -18,7 +18,7 @@ spec:
         ageRecipient: age18du40xqw5830qxz7h05sepn2gppcrhysfujk7uqd7c6v0yxhy9tqvgtq9w
         sqlite:
           pvcName: handlat-labs
-          path: /data/laga.sqlite
+          path: /data/handlat.sqlite
         s3:
           endpoint: https://s3.fr-par.scw.cloud
           region: fr-par
