@@ -7,6 +7,12 @@ resources:
   - hello-world.yaml
   - local-path-provisioner.yaml
   - handlat/preview
+  - handlat-production-storageclass.yaml
+  - handlat-production-project.yaml
+  - handlat-production.yaml
+  - handlat-production-backup-daily.yaml
+  - handlat-production-backup-weekly.yaml
+  - handlat-production-backup-monthly.yaml
   - handlat-labs-project.yaml
   - handlat-labs.yaml
   - handlat-labs-backup-daily.yaml

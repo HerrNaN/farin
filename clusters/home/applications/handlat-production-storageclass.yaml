@@ -1,0 +1,13 @@
+# Use the same provisioner and retention policy as labs, with a production storage class.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: handlat-production-local
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+    storageclass.kubernetes.io/is-default-class: "false"
+    defaultVolumeType: local
+provisioner: cluster.local/local-path-provisioner
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
