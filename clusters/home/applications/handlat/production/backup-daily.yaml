@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: handlat-production-backup-daily
+  namespace: argocd
+spec:
+  project: handlat-production
+  source:
+    repoURL: ghcr.io/herrnan/charts/devel
+    chart: sqlite-to-s3
+    targetRevision: "*-0"
+    helm:
+      releaseName: handlat-production-backup-daily
+      valuesObject:
+        schedule: "@daily"
+        timeZone: Etc/UTC
+        # Public recipient only; keep the private age identity outside the cluster.
+        ageRecipient: age1gete36kjgsny3au46qtzylsrjwx8d66mleg49m6hh9xhjz2q543srfr044
+        sqlite:
+          pvcName: handlat-production
+          path: /data/handlat.sqlite
+        s3:
+          endpoint: https://s3.fr-par.scw.cloud
+          region: fr-par
+          bucket: prod-handlat-db-backups
+          # Dedicated prefix: objects beyond keepLast are deleted after upload.
+          prefix: daily
+          keepLast: 7
+          # Create manually in handlat-production with AWS_ACCESS_KEY_ID and
+          # AWS_SECRET_ACCESS_KEY containing the Scaleway credentials.
+          existingSecret: handlat-backup-s3
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: handlat-production
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true

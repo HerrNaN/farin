@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: handlat-production
+  namespace: argocd
+spec:
+  project: handlat-production
+  source:
+    repoURL: ghcr.io/herrnan/charts/stable
+    chart: handlat
+    # Follow stable chart versions only, excluding prereleases.
+    targetRevision: "*"
+    helm:
+      releaseName: handlat-production
+      valuesObject:
+        webAuthn:
+          rpID: handlat.app
+          origin: https://handlat.app
+        persistence:
+          retain: true
+          storageClass: handlat-production-local
+          size: 1Gi
+        ingress:
+          enabled: true
+          className: traefik
+          host: handlat.app
+          tlsSecretName: handlat-production-tls
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-production
+            traefik.ingress.kubernetes.io/router.entrypoints: websecure
+            traefik.ingress.kubernetes.io/router.tls: "true"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: handlat-production
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
